@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import EventCard from "@/components/EventCard";
 
-export default function EventsPage() {
+function EventsContent() {
   const [events, setEvents] = useState([]);
-
   const searchParams = useSearchParams();
 
   const artist = searchParams.get("artist");
@@ -19,11 +20,8 @@ export default function EventsPage() {
         let filtered = data;
 
         if (artist) {
-          filtered = filtered.filter(
-            (event) =>
-              event.artist
-                ?.toLowerCase()
-                .includes(artist.toLowerCase())
+          filtered = filtered.filter((event) =>
+            event.artist?.toLowerCase().includes(artist.toLowerCase())
           );
         }
 
@@ -46,5 +44,13 @@ export default function EventsPage() {
         />
       ))}
     </div>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EventsContent />
+    </Suspense>
   );
 }
